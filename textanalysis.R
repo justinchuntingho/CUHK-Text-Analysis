@@ -8,8 +8,8 @@
 # =================================== Setting Up =======================================
 
 # Downloading the datasets
-download.file("https://raw.githubusercontent.com/DCS-training/CDCS-Summer-School/main/Text-Analysis-R/data/snp.csv", "snp.csv")
-download.file("https://raw.githubusercontent.com/DCS-training/CDCS-Summer-School/main/Text-Analysis-R/data/scotelection2021.csv", "scotelection2021.csv")
+download.file("https://raw.githubusercontent.com/justinchuntingho/CUHK-Text-Analysis/main/snp.csv", "snp.csv")
+download.file("https://raw.githubusercontent.com/justinchuntingho/CUHK-Text-Analysis/main/scotelection2021.csv", "scotelection2021.csv")
 
 # Installing the packages
 install.packages("quanteda")
