@@ -15,7 +15,7 @@ download.file("https://raw.githubusercontent.com/justinchuntingho/CUHK-Text-Anal
 install.packages("quanteda")
 install.packages("quanteda.textplots")
 install.packages("quanteda.textstats")
-install.packages("magrittr")
+install.packages("dplyr")
 install.packages("wordcloud")
 install.packages("ggplot2")
 
@@ -24,7 +24,7 @@ library(quanteda)
 library(quanteda.textplots)
 library(quanteda.textstats)
 library(ggplot2)
-library(magrittr)
+library(dplyr)
 
 # =================================== Basic Text Analysis =======================================
 
@@ -46,15 +46,15 @@ docvars(corpus_snp)
 customstopwords <- c("s", "http", "stopword")
 
 # Creating DFM
-tokens_snp <- tokens(corpus_snp, 
-                     remove_punct = TRUE, 
-                     remove_numbers = TRUE, 
+tokens_snp <- tokens(corpus_snp,
+                     remove_punct = TRUE,
+                     remove_numbers = TRUE,
                      remove_url = TRUE,
                      verbose = TRUE)
 dfm_snp <- dfm(tokens_snp)
 
 # Inspecting the results
-topfeatures(dfm_snp, 30) 
+topfeatures(dfm_snp, 30)
 
 # What is it with "make"?
 kwic(tokens_snp, "make", 3)
@@ -73,7 +73,7 @@ data.frame(list(term = names(scotfeatures), frequency = unname(scotfeatures))) %
 dfm_snp <- dfm_remove(dfm_snp, c(stopwords('english'), customstopwords))
 
 # Inspecting the results again
-topfeatures(dfm_snp, 30) 
+topfeatures(dfm_snp, 30)
 
 # Top words again
 scotfeatures <- topfeatures(dfm_snp, 100)  # Putting the top 100 words into a new object
@@ -92,10 +92,10 @@ textplot_wordcloud(dfm_snp)
 # Loading the documents
 df_all <-  read.csv("scotelection2021.csv", stringsAsFactors = FALSE)
 corpus_all <- corpus(df_all, text_field = "text")
-tokens_all <- tokens(corpus_all, 
-                     remove_punct = TRUE, 
-                     remove_numbers = TRUE, 
-                     verbose = TRUE, 
+tokens_all <- tokens(corpus_all,
+                     remove_punct = TRUE,
+                     remove_numbers = TRUE,
+                     verbose = TRUE,
                      remove_url = TRUE)
 dfm_all <- dfm(tokens_all)
 dfm_all <- dfm_remove(dfm_all, c(stopwords('english'), customstopwords))
@@ -117,15 +117,15 @@ dev.off()
 # =================================== Keyword Analysis =======================================
 
 # Comparing only Scottish Conservatives and Scottish Labour
-dfm_conlab <- corpus_all %>% 
+dfm_conlab <- corpus_all %>%
   corpus_subset(snsname %in% c("Scottish Conservatives", "Scottish Labour Party")) %>%
-  tokens(remove_punct = TRUE, 
-         remove_numbers = TRUE, 
-         verbose = TRUE, 
-         remove_url = TRUE) %>% 
-  dfm() %>% 
+  tokens(remove_punct = TRUE,
+         remove_numbers = TRUE,
+         verbose = TRUE,
+         remove_url = TRUE) %>%
+  dfm() %>%
   dfm_remove(c(stopwords('english'), customstopwords))
-tstat_key <- textstat_keyness(dfm_conlab, 
+tstat_key <- textstat_keyness(dfm_conlab,
                               target = docvars(dfm_conlab, "snsname") == "Scottish Conservatives")
 textplot_keyness(tstat_key, n = 30)
 
@@ -133,8 +133,8 @@ textplot_keyness(tstat_key, n = 30)
 keyness_cloud <- function(x, a = "A", b = "B", acol = "#00C094", bcol = "#F8766D", w = 600, h = 600, maxword = 500, png = TRUE){
   set.seed(1024)
   #Select all word with p-value <= 0.05 and then make a comparison wordcloud
-  kwdssig <- data.frame(term = x$feature, chi2 = x$chi2, p=x$p) %>% 
-    dplyr::filter(x$p <= 0.05) %>% 
+  kwdssig <- data.frame(term = x$feature, chi2 = x$chi2, p=x$p) %>%
+    dplyr::filter(x$p <= 0.05) %>%
     dplyr::select(term, chi2)
   row.names(kwdssig) <- kwdssig$term
   kwdssig$a <- kwdssig$chi2
